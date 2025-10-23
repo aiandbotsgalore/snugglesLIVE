@@ -46,31 +46,36 @@ A production-ready web application featuring real-time voice conversations with 
 - Google Gemini API key (free at [Google AI Studio](https://aistudio.google.com/app/apikey))
 - Supabase project (already configured in this project)
 
-## Installation
+## 5-Minute Setup
 
-1. Install dependencies:
+### Step 1: Install Dependencies
 ```bash
 npm install
 ```
 
-2. The Supabase database is already configured with connection details in `.env`
+### Step 2: Get Your Gemini API Key
 
-3. Start the development server:
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Sign in with your Google account
+3. Click "Create API Key"
+4. Copy the generated key
+
+### Step 3: Start the Application
 ```bash
 npm run dev
 ```
 
-4. Open the application in your browser (typically http://localhost:5173)
+### Step 4: Configure API Key
 
-5. On first launch, you'll be prompted to enter your Gemini API key
+1. Open the app in your browser (http://localhost:5173)
+2. Paste your Gemini API key in the setup screen
+3. Click "Start"
 
-## Getting a Gemini API Key
+### Step 5: Grant Microphone Access
 
-1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy the API key
-5. Paste it into the application's setup screen
+1. Click "Start Talking"
+2. Allow microphone access when prompted
+3. Start speaking!
 
 Your API key is stored locally in your browser and never sent anywhere except Google's Gemini API.
 
@@ -118,44 +123,21 @@ Access settings via the gear icon in the header:
 
 ## Technical Architecture
 
-### Frontend Stack
-- React 18 with TypeScript
-- Vite for build tooling
-- Tailwind CSS for styling
-- Lucide React for icons
+Big Snuggles Live is a full-stack real-time conversational AI application built with modern web technologies. The architecture follows a service-based pattern with clear separation of concerns.
 
-### AI & Voice Services
-- Google Gemini 2.0 Flash for AI responses
-- Web Speech API for voice I/O
-- Custom speech service with queue management
+### Technology Stack
 
-### Database
-- Supabase (PostgreSQL) for data persistence
-- Three main tables: conversations, conversation_summaries, user_preferences
-- Row Level Security policies for data protection
+#### Frontend
+- **React 18**: Component-based UI with hooks
+- **TypeScript**: Type-safe development
+- **Vite**: Fast build tooling and HMR
+- **Tailwind CSS**: Utility-first styling with custom CSS variables
+- **Lucide React**: Icon library
 
-### State Management
-- React hooks for local state
-- Custom useConversation hook for conversation logic
-- Service-based architecture for AI, speech, and database operations
-
-## Performance Optimization
-
-- Response caching to reduce API calls
-- Lazy loading for conversation history
-- GPU-accelerated CSS animations
-- Debounced transcript processing
-- Efficient database queries with indexes
-
-## Privacy & Security
-
-- API keys stored in browser localStorage only
-- No data sent to third parties except Gemini API
-- User can clear all data at any time
-- Secure database connections via Supabase
-- Optional memory disable for private sessions
-
-## Development
+#### Backend Services
+- **Supabase**: PostgreSQL database with real-time capabilities
+- **Google Gemini 2.0 Flash**: AI language model
+- **Web Speech API**: Browser-native voice recognition and synthesis
 
 ### Project Structure
 ```
@@ -176,6 +158,42 @@ src/
 ├── config/            # Configuration
 └── lib/               # Third-party setup
 ```
+
+### Core Services
+
+#### GeminiService (`src/services/gemini.ts`)
+Manages AI conversation generation:
+- Request queuing to prevent race conditions
+- Context formatting with recent messages + summary
+- Error handling with detailed messages
+- Token management and configuration
+- Singleton pattern for API key management
+
+#### SpeechService (`src/services/speech.ts`)
+Handles voice input/output:
+- Continuous speech recognition with interim results
+- Text-to-speech with voice customization
+- Audio queue management
+- Error recovery and fallback handling
+- Event-based callback system
+
+#### DatabaseService (`src/services/database.ts`)
+Manages all Supabase operations:
+- Message persistence with timestamps
+- Session management and retrieval
+- Conversation summarization
+- User preferences CRUD operations
+- Error handling with detailed messages
+
+### Custom Hooks
+
+#### useConversation (`src/hooks/useConversation.ts`)
+Main conversation state management:
+- Integrates speech, AI, and database services
+- Manages conversation flow and state
+- Handles transcript processing with debouncing
+- Coordinates avatar state changes
+- Error handling and recovery
 
 ### Available Scripts
 

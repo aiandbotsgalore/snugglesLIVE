@@ -1,14 +1,29 @@
 import { BIG_SNUGGLES_SYSTEM_PROMPT, GEMINI_API_URL } from '../config/character';
 import type { Message } from '../types';
 
+/**
+ * A service class for interacting with the Google Gemini API.
+ * It handles the formatting of messages, making API requests, and managing
+ * a request queue to prevent race conditions.
+ */
 export class GeminiService {
   private apiKey: string;
   private requestQueue: Promise<string>[] = [];
 
+  /**
+   * Creates an instance of the GeminiService.
+   * @param {string} apiKey - The API key for the Gemini API.
+   */
   constructor(apiKey: string) {
     this.apiKey = apiKey;
   }
 
+  /**
+   * Generates a response from the Gemini API based on the conversation history.
+   * @param {Message[]} messages - The recent messages in the conversation.
+   * @param {string} [conversationSummary] - An optional summary of the conversation history.
+   * @returns {Promise<string>} A promise that resolves with the AI-generated response text.
+   */
   async generateResponse(
     messages: Message[],
     conversationSummary?: string
@@ -93,6 +108,10 @@ export class GeminiService {
     return candidate.content.parts[0].text;
   }
 
+  /**
+   * Checks if there are any pending API requests.
+   * @returns {boolean} True if there are active requests, false otherwise.
+   */
   isProcessing(): boolean {
     return this.requestQueue.length > 0;
   }
@@ -100,10 +119,20 @@ export class GeminiService {
 
 let geminiServiceInstance: GeminiService | null = null;
 
+/**
+ * Initializes the singleton instance of the GeminiService.
+ * This must be called before `getGeminiService` can be used.
+ * @param {string} apiKey - The Gemini API key.
+ */
 export function initializeGeminiService(apiKey: string): void {
   geminiServiceInstance = new GeminiService(apiKey);
 }
 
+/**
+ * Retrieves the singleton instance of the GeminiService.
+ * @returns {GeminiService} The initialized GeminiService instance.
+ * @throws {Error} If the service has not been initialized.
+ */
 export function getGeminiService(): GeminiService {
   if (!geminiServiceInstance) {
     throw new Error('Gemini service not initialized. Please set your API key first.');
@@ -111,6 +140,10 @@ export function getGeminiService(): GeminiService {
   return geminiServiceInstance;
 }
 
+/**
+ * Checks if the GeminiService has been initialized.
+ * @returns {boolean} True if the service is initialized, false otherwise.
+ */
 export function isGeminiServiceInitialized(): boolean {
   return geminiServiceInstance !== null;
 }

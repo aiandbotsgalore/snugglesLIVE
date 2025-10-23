@@ -1,7 +1,18 @@
 import { supabase } from '../lib/supabase';
 import type { Message, ConversationSummary, UserPreferences } from '../types';
 
+/**
+ * Provides a service layer for interacting with the Supabase database.
+ * This class encapsulates all database operations related to conversations,
+ * user preferences, and session management.
+ */
 export class DatabaseService {
+  /**
+   * Saves a single message to the database.
+   * @param {Omit<Message, 'id' | 'created_at'>} message - The message object to save.
+   * @returns {Promise<Message>} A promise that resolves with the saved message, including its new ID and timestamp.
+   * @throws {Error} If the database operation fails.
+   */
   async saveMessage(message: Omit<Message, 'id' | 'created_at'>): Promise<Message> {
     const { data, error } = await supabase
       .from('conversations')
@@ -16,6 +27,12 @@ export class DatabaseService {
     return data;
   }
 
+  /**
+   * Retrieves all messages for a given session ID, ordered by creation time.
+   * @param {string} sessionId - The ID of the session to retrieve messages for.
+   * @returns {Promise<Message[]>} A promise that resolves with an array of messages.
+   * @throws {Error} If the database operation fails.
+   */
   async getConversationMessages(sessionId: string): Promise<Message[]> {
     const { data, error } = await supabase
       .from('conversations')
@@ -30,6 +47,11 @@ export class DatabaseService {
     return data || [];
   }
 
+  /**
+   * Fetches a summary of all conversation sessions, including session ID, last activity, and message count.
+   * @returns {Promise<Array<{ session_id: string; last_activity: string; message_count: number }>>} A promise that resolves with an array of session summary objects.
+   * @throws {Error} If the database operation fails.
+   */
   async getAllSessions(): Promise<Array<{ session_id: string; last_activity: string; message_count: number }>> {
     const { data, error } = await supabase
       .from('conversations')
@@ -63,6 +85,12 @@ export class DatabaseService {
     }));
   }
 
+  /**
+   * Deletes all messages and the summary for a specific session ID.
+   * @param {string} sessionId - The ID of the session to delete.
+   * @returns {Promise<void>} A promise that resolves when the deletion is complete.
+   * @throws {Error} If the database operation fails.
+   */
   async deleteSession(sessionId: string): Promise<void> {
     const { error: messagesError } = await supabase
       .from('conversations')
@@ -83,6 +111,12 @@ export class DatabaseService {
     }
   }
 
+  /**
+   * Saves or updates a conversation summary.
+   * @param {Omit<ConversationSummary, 'id' | 'created_at' | 'updated_at'>} summary - The summary object to save.
+   * @returns {Promise<ConversationSummary>} A promise that resolves with the saved summary.
+   * @throws {Error} If the database operation fails.
+   */
   async saveSummary(summary: Omit<ConversationSummary, 'id' | 'created_at' | 'updated_at'>): Promise<ConversationSummary> {
     const { data, error } = await supabase
       .from('conversation_summaries')
@@ -99,6 +133,12 @@ export class DatabaseService {
     return data;
   }
 
+  /**
+   * Retrieves the summary for a specific session ID.
+   * @param {string} sessionId - The ID of the session to get the summary for.
+   * @returns {Promise<ConversationSummary | null>} A promise that resolves with the summary, or null if not found.
+   * @throws {Error} If the database operation fails.
+   */
   async getSummary(sessionId: string): Promise<ConversationSummary | null> {
     const { data, error } = await supabase
       .from('conversation_summaries')
@@ -113,6 +153,12 @@ export class DatabaseService {
     return data;
   }
 
+  /**
+   * Saves or updates user preferences.
+   * @param {Omit<UserPreferences, 'id' | 'created_at' | 'updated_at'>} preferences - The preferences object to save.
+   * @returns {Promise<UserPreferences>} A promise that resolves with the saved preferences.
+   * @throws {Error} If the database operation fails.
+   */
   async savePreferences(preferences: Omit<UserPreferences, 'id' | 'created_at' | 'updated_at'>): Promise<UserPreferences> {
     const { data, error } = await supabase
       .from('user_preferences')
@@ -129,6 +175,12 @@ export class DatabaseService {
     return data;
   }
 
+  /**
+   * Retrieves user preferences for a given user ID.
+   * @param {string} userId - The ID of the user to retrieve preferences for.
+   * @returns {Promise<UserPreferences | null>} A promise that resolves with the user's preferences, or null if not found.
+   * @throws {Error} If the database operation fails.
+   */
   async getPreferences(userId: string): Promise<UserPreferences | null> {
     const { data, error } = await supabase
       .from('user_preferences')
@@ -143,6 +195,11 @@ export class DatabaseService {
     return data;
   }
 
+  /**
+   * Retrieves user preferences for a given user ID, creating them with default values if they don't exist.
+   * @param {string} userId - The ID of the user.
+   * @returns {Promise<UserPreferences>} A promise that resolves with the user's preferences.
+   */
   async getOrCreatePreferences(userId: string): Promise<UserPreferences> {
     const existing = await this.getPreferences(userId);
 

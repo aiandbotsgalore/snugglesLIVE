@@ -10,6 +10,19 @@ interface SettingsModalProps {
   availableVoices: SpeechSynthesisVoice[];
 }
 
+/**
+ * Renders a modal dialog for adjusting user settings.
+ * This includes appearance (theme), voice settings (voice, rate, pitch),
+ * and privacy settings (conversation memory, push-to-talk).
+ *
+ * @param {SettingsModalProps} props - The props for the component.
+ * @param {boolean} props.isOpen - Whether the modal is currently open.
+ * @param {() => void} props.onClose - Callback function to close the modal.
+ * @param {UserPreferences} props.preferences - The current user preferences.
+ * @param {(preferences: Partial<UserPreferences>) => void} props.onUpdatePreferences - Callback to update the user preferences.
+ * @param {SpeechSynthesisVoice[]} props.availableVoices - A list of available speech synthesis voices.
+ * @returns {JSX.Element | null} The rendered settings modal or null if it's not open.
+ */
 export function SettingsModal({
   isOpen,
   onClose,

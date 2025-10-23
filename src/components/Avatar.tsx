@@ -6,6 +6,17 @@ interface AvatarProps {
   audioLevel?: number;
 }
 
+/**
+ * Renders an animated SVG avatar that reflects the application's state.
+ * The avatar is a gangster teddy bear character named "Big Snuggles".
+ * It features blinking, mouth movement when speaking, and visual state indicators
+ * for listening, thinking, and speaking.
+ *
+ * @param {AvatarProps} props - The props for the component.
+ * @param {AvatarState} props.state - The current state of the avatar, which determines its animation.
+ * @param {number} [props.audioLevel=0] - The current audio level from the microphone, used to animate the avatar's scale while speaking.
+ * @returns {JSX.Element} The rendered SVG avatar component.
+ */
 export function Avatar({ state, audioLevel = 0 }: AvatarProps) {
   const [blinkState, setBlinkState] = useState(false);
   const [mouthOpen, setMouthOpen] = useState(0);
