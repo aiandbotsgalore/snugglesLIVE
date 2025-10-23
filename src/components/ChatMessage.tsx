@@ -5,6 +5,14 @@ interface ChatMessageProps {
   message: Message;
 }
 
+/**
+ * Renders a single chat message, differentiating between user and AI messages.
+ * It displays the sender's icon, name, the message content, and a timestamp.
+ *
+ * @param {ChatMessageProps} props - The props for the component.
+ * @param {Message} props.message - The message object to display.
+ * @returns {JSX.Element} The rendered chat message component.
+ */
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
   const timestamp = new Date(message.created_at).toLocaleTimeString([], {

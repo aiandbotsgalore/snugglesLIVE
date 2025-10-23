@@ -5,6 +5,28 @@ import { SpeechService } from '../services/speech';
 import type { Message, AvatarState, UserPreferences } from '../types';
 import { generateSessionId, getCurrentSessionId, setCurrentSessionId } from '../utils/session';
 
+/**
+ * A comprehensive hook for managing the entire conversation flow.
+ * It handles state for messages, speech recognition, speech synthesis,
+ * AI interaction, and avatar state. It also interfaces with database,
+ * AI, and speech services.
+ *
+ * @param {UserPreferences} preferences - The user's current preferences, which affect
+ *   speech synthesis and conversation memory.
+ * @returns {object} An object containing the conversation state and control functions.
+ * @property {Message[]} messages - An array of messages in the current conversation.
+ * @property {string} currentTranscript - The real-time transcript from speech recognition.
+ * @property {AvatarState} avatarState - The current state of the avatar ('idle', 'listening', 'thinking', 'speaking').
+ * @property {boolean} isListening - True if the microphone is actively listening.
+ * @property {boolean} isSpeaking - True if the AI is currently speaking.
+ * @property {boolean} isProcessing - True if an AI response is being generated.
+ * @property {string | null} error - Any error message that has occurred.
+ * @property {string} sessionId - The unique identifier for the current conversation session.
+ * @property {() => void} startListening - Function to start speech recognition.
+ * @property {() => void} stopListening - Function to stop speech recognition.
+ * @property {() => void} stopSpeaking - Function to interrupt and stop AI speech.
+ * @property {() => void} clearError - Function to clear the current error message.
+ */
 export function useConversation(preferences: UserPreferences) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentTranscript, setCurrentTranscript] = useState('');
