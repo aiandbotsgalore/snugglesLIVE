@@ -53,36 +53,13 @@ export class DatabaseService {
    * @throws {Error} If the database operation fails.
    */
   async getAllSessions(): Promise<Array<{ session_id: string; last_activity: string; message_count: number }>> {
-    const { data, error } = await supabase
-      .from('conversations')
-      .select('session_id, created_at')
-      .order('created_at', { ascending: false });
+    const { data, error } = await supabase.rpc('get_all_sessions');
 
     if (error) {
       throw new Error(`Failed to fetch sessions: ${error.message}`);
     }
 
-    const sessionMap = new Map<string, { last_activity: string; message_count: number }>();
-
-    data?.forEach(msg => {
-      const existing = sessionMap.get(msg.session_id);
-      if (!existing) {
-        sessionMap.set(msg.session_id, {
-          last_activity: msg.created_at,
-          message_count: 1
-        });
-      } else {
-        existing.message_count++;
-        if (msg.created_at > existing.last_activity) {
-          existing.last_activity = msg.created_at;
-        }
-      }
-    });
-
-    return Array.from(sessionMap.entries()).map(([session_id, data]) => ({
-      session_id,
-      ...data
-    }));
+    return data;
   }
 
   /**
